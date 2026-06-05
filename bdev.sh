@@ -234,7 +234,7 @@ done
 : ${PKR_VAR_os_img:=$PKR_VAR_os_out/$PKR_VAR_os_dist-$PKR_VAR_os_ver-$PKR_VAR_os_id/$PKR_VAR_os_dist-$PKR_VAR_os_ver-x86_64.qcow2}
 : ${PKR_VAR_os_iso:=$PKR_VAR_os_out/$PKR_VAR_os_dist-$PKR_VAR_os_ver-$PKR_VAR_os_from/$PKR_VAR_os_dist-$PKR_VAR_os_ver-x86_64.qcow2}
 : ${PKR_VAR_os_sum:=$(echo $PKR_VAR_os_iso|sed -e 's/iso$/txt/' -e 's/qcow2$/txt/')}
-: ${PKR_VAR_os_date:=$(date +%Y%m%d%H%M)}
+: ${PKR_VAR_os_date:=$(date +%y%m%d%H%M)}
 : ${PKR_VAR_os_edir:=$PKR_VAR_os_out/$PKR_VAR_os_dist-$PKR_VAR_os_ver-$PKR_VAR_os_id}
 : ${PKR_VAR_vg_repo:=$PKR_VAR_os_dist$PKR_VAR_os_maj-$PKR_VAR_os_from}
 
