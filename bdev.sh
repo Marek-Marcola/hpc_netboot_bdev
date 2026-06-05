@@ -20,7 +20,9 @@ REPO=""
 : ${PKR_VAR_os_anpb:=""}
 : ${PKR_VAR_os_date:=""}
 
-INSTALL=0
+INSTALL_RSYNC=0
+INSTALL_ANPB=0
+INSTALL_ANPB_HP="bdev"
 VERSION=0
 STAGE_LIST=0
 PLUGINS=0
@@ -52,7 +54,12 @@ while [ $# -gt 0 ]; do
       shift
       ;;
     --inst*|-inst*)
-      INSTALL=1
+      INSTALL_RSYNC=1
+      shift
+      ;;
+    --anpb|-anpb)
+      INSTALL_ANPB=1
+      [[ -n "$2" && ${2:0:1} != "-" ]] && INSTALL_ANPB_HP="$2" && shift
       shift
       ;;
     --stage|-stage)
@@ -167,25 +174,29 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+#
+# stage: HELP
+#
 if [ $HELP -eq 1 ]; then
-  echo "$SN -version     # version"
-  echo "$SN -install     # install with rsync"
-  echo "$SN -stage       # stage list"
+  echo "$SN -version                       # version"
+  echo "$SN -install                       # install with rsync"
+  echo "$SN -anpb [host_pattern] [-x]      # install with ansible"
+  echo "$SN -stage                         # stage list"
   echo ""
-  echo "$SN -P           # plugins"
-  echo "$SN -E  [opts]   # env"
-  echo "$SN -l  [opts]   # list"
-  echo "$SN -c  [opts]   # clean"
-  echo "$SN -i  [opts]   # inspect"
-  echo "$SN -v  [opts]   # validate"
-  echo "$SN -b  [opts]   # build"
-  echo "$SN -bf [opts]   # build from list"
-  echo "$SN -e  [opts]   # export create"
-  echo "$SN -eu [opts]   # export upload"
-  echo "$SN -ic          # image chain"
-  echo "$SN -iv          # image versions"
-  echo "$SN -if          # image files"
-  echo "$SN              # info"
+  echo "$SN -P                             # plugins"
+  echo "$SN -E  [opts]                     # env"
+  echo "$SN -l  [opts]                     # list"
+  echo "$SN -c  [opts]                     # clean"
+  echo "$SN -i  [opts]                     # inspect"
+  echo "$SN -v  [opts]                     # validate"
+  echo "$SN -b  [opts]                     # build"
+  echo "$SN -bf [opts]                     # build from list"
+  echo "$SN -e  [opts]                     # export create"
+  echo "$SN -eu [opts]                     # export upload"
+  echo "$SN -ic                            # image chain"
+  echo "$SN -iv                            # image versions"
+  echo "$SN -if                            # image files"
+  echo "$SN                                # info"
   echo ""
   echo "opts:"
   echo "  -R repo"
@@ -209,10 +220,13 @@ if [ $HELP -eq 1 ]; then
   exit 0
 fi
 
+#
+# stage: CONFIG
+#
 for f in $HOME/.bdev.env .bdev.env $PDEVENV /usr/local/etc/bdev.env; do
   if [ -e $f ]; then
     [[ "$EFILE" != "" ]] && EFILE="$EFILE $f" || EFILE="$f"
-    . ${f}
+    . $f
   fi
 done
 
@@ -279,9 +293,9 @@ if [ $VERSION -eq 1 ]; then
 fi
 
 #
-# stage: INSTALL
+# stage: INSTALL-RSYNC
 #
-if [ $INSTALL -eq 1 ]; then
+if [ $INSTALL_RSYNC -eq 1 ]; then
   if [ -f bdev.env ]; then
     for d in /usr/local/etc /pub/pkb/kb/data/999202-bdev/999202-000020_bdev_script /pub/pkb/pb/playbooks/999202-bdev/files; do
       if [ -d $d ]; then
@@ -309,6 +323,27 @@ if [ $INSTALL -eq 1 ]; then
       fi
     done
   fi
+  exit 0
+fi
+
+#
+# stage: INSTALL-ANPB
+#
+if [ $INSTALL_ANPB -eq 1 ]; then
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: INSTALL-ANPB (EVAL=$EVAL)"
+
+  if [ ! $(type -t anpb) ]; then
+    echo "$ID: error: command not found: anpb"
+    exit 1
+  fi
+
+  [[ $EVAL -ne 1 ]] && EVAL_OPT="--check --diff" || EVAL_OPT=""
+
+  set -ex
+  anpb bdev_install.yml -e h=$INSTALL_ANPB_HP $EVAL_OPT
+  { set +ex; } 2>/dev/null
+
   exit 0
 fi
 
