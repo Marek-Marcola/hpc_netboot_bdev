@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260527"
+VERSION_BIN="260605"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -20,8 +20,9 @@ REPO=""
 : ${PKR_VAR_os_anpb:=""}
 : ${PKR_VAR_os_date:=""}
 
-VERSION=0
 INSTALL=0
+VERSION=0
+STAGE_LIST=0
 PLUGINS=0
 ENV=0
 LIST=0
@@ -42,8 +43,9 @@ declare -a ARGS1
 ls | grep -q pkr.hcl
 [[ $? -eq 0 ]] && REPO="$(basename $(pwd))"
 
-while [ $# -gt 0 ]
-do
+: ${COMM:=$(readlink -f ${BASH_SOURCE})}
+
+while [ $# -gt 0 ]; do
   case $1 in
     --vers*|-vers*)
       VERSION=1
@@ -51,6 +53,10 @@ do
       ;;
     --inst*|-inst*)
       INSTALL=1
+      shift
+      ;;
+    --stage|-stage)
+      STAGE_LIST=1
       shift
       ;;
     -P)
@@ -162,22 +168,24 @@ do
 done
 
 if [ $HELP -eq 1 ]; then
-  echo "$(basename $0) -version     # version"
-  echo "$(basename $0) -install     # install"
-  echo "$(basename $0) -P           # plugins"
-  echo "$(basename $0) -E  [opts]   # env"
-  echo "$(basename $0) -l  [opts]   # list"
-  echo "$(basename $0) -c  [opts]   # clean"
-  echo "$(basename $0) -i  [opts]   # inspect"
-  echo "$(basename $0) -v  [opts]   # validate"
-  echo "$(basename $0) -b  [opts]   # build"
-  echo "$(basename $0) -bf [opts]   # build from list"
-  echo "$(basename $0) -e  [opts]   # export create"
-  echo "$(basename $0) -eu [opts]   # export upload"
-  echo "$(basename $0) -ic          # image chain"
-  echo "$(basename $0) -iv          # image versions"
-  echo "$(basename $0) -if          # image files"
-  echo "$(basename $0)              # info"
+  echo "$SN -version     # version"
+  echo "$SN -install     # install with rsync"
+  echo "$SN -stage       # stage list"
+  echo ""
+  echo "$SN -P           # plugins"
+  echo "$SN -E  [opts]   # env"
+  echo "$SN -l  [opts]   # list"
+  echo "$SN -c  [opts]   # clean"
+  echo "$SN -i  [opts]   # inspect"
+  echo "$SN -v  [opts]   # validate"
+  echo "$SN -b  [opts]   # build"
+  echo "$SN -bf [opts]   # build from list"
+  echo "$SN -e  [opts]   # export create"
+  echo "$SN -eu [opts]   # export upload"
+  echo "$SN -ic          # image chain"
+  echo "$SN -iv          # image versions"
+  echo "$SN -if          # image files"
+  echo "$SN              # info"
   echo ""
   echo "opts:"
   echo "  -R repo"
@@ -275,7 +283,7 @@ fi
 #
 if [ $INSTALL -eq 1 ]; then
   if [ -f bdev.env ]; then
-    for d in /usr/local/etc /pub/pkb/kb/data/999230-bdev/999230-000020_bdev_script /pub/pkb/pb/playbooks/999230-bdev/files; do
+    for d in /usr/local/etc /pub/pkb/kb/data/999202-bdev/999202-000020_bdev_script /pub/pkb/pb/playbooks/999202-bdev/files; do
       if [ -d $d ]; then
         set -ex
         rsync -ai bdev.env $d
@@ -284,7 +292,7 @@ if [ $INSTALL -eq 1 ]; then
     done
   fi
   if [ -f bdev.sh ]; then
-    for d in /usr/local/bin /pub/pkb/kb/data/999230-bdev/999230-000020_bdev_script /pub/pkb/pb/playbooks/999230-bdev/files; do
+    for d in /usr/local/bin /pub/pkb/kb/data/999202-bdev/999202-000020_bdev_script /pub/pkb/pb/playbooks/999202-bdev/files; do
       if [ -d $d ]; then
         set -ex
         rsync -ai bdev.sh $d
@@ -293,7 +301,7 @@ if [ $INSTALL -eq 1 ]; then
     done
   fi
   if [ -f vagrant-metadata.sh ]; then
-    for d in /usr/local/bin /pub/pkb/kb/data/999230-bdev/999230-000020_bdev_script /pub/pkb/pb/playbooks/999230-bdev/files; do
+    for d in /usr/local/bin /pub/pkb/kb/data/999202-bdev/999202-000020_bdev_script /pub/pkb/pb/playbooks/999202-bdev/files; do
       if [ -d $d ]; then
         set -ex
         rsync -ai vagrant-metadata.sh $d
@@ -301,6 +309,14 @@ if [ $INSTALL -eq 1 ]; then
       fi
     done
   fi
+  exit 0
+fi
+
+#
+# stage: STAGE-LIST
+#
+if [ $STAGE_LIST -eq 1 ]; then
+  cat $COMM | grep '^#' | grep 'stage:'
   exit 0
 fi
 
