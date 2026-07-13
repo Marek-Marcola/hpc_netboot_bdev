@@ -25,6 +25,7 @@ INSTALL_ANPB=0
 INSTALL_ANPB_HP="bdev"
 VERSION=0
 STAGE_LIST=0
+EVAL=0
 PLUGINS=0
 ENV=0
 LIST=0
@@ -64,6 +65,10 @@ while [ $# -gt 0 ]; do
       ;;
     --stage|-stage)
       STAGE_LIST=1
+      shift
+      ;;
+    -x)
+      EVAL=1
       shift
       ;;
     -P)
@@ -298,33 +303,53 @@ fi
 # stage: INSTALL-RSYNC
 #
 if [ $INSTALL_RSYNC -eq 1 ]; then
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: INSTALL-RSYNC (EVAL=$EVAL)"
+
+  [[ $EVAL -ne 1 ]] && EVAL_OPT="-n" || EVAL_OPT=""
+
   if [ -f bdev.env ]; then
     for d in /usr/local/etc /pub/pkb/kb/data/999202-bdev/999202-000020_bdev_script /pub/pkb/pb/playbooks/999202-bdev/files; do
       if [ -d $d ]; then
         set -ex
-        rsync -ai bdev.env $d
+        rsync -ai $EVAL_OPT bdev.env $d
         { set +ex; } 2>/dev/null
       fi
     done
+  elif [ -f /pub/pkb/pb/playbooks/999202-bdev/files/bdev.sh ]; then
+    set -ex
+    rsync -ai $EVAL_OPT /pub/pkb/pb/playbooks/999202-bdev/files/bdev.sh /usr/local/etc/
+    { set +ex; } 2>/dev/null
   fi
+
   if [ -f bdev.sh ]; then
     for d in /usr/local/bin /pub/pkb/kb/data/999202-bdev/999202-000020_bdev_script /pub/pkb/pb/playbooks/999202-bdev/files; do
       if [ -d $d ]; then
         set -ex
-        rsync -ai bdev.sh $d
+        rsync -ai $EVAL_OPT bdev.sh $d
         { set +ex; } 2>/dev/null
       fi
     done
+  elif [ -f /pub/pkb/pb/playbooks/999202-bdev/files/bdev.env ]; then
+    set -ex
+    rsync -ai $EVAL_OPT /pub/pkb/pb/playbooks/999202-bdev/files/bdev.env /usr/local/etc/
+    { set +ex; } 2>/dev/null
   fi
+
   if [ -f vagrant-metadata.sh ]; then
     for d in /usr/local/bin /pub/pkb/kb/data/999202-bdev/999202-000020_bdev_script /pub/pkb/pb/playbooks/999202-bdev/files; do
       if [ -d $d ]; then
         set -ex
-        rsync -ai vagrant-metadata.sh $d
+        rsync -ai $EVAL_OPT vagrant-metadata.sh $d
         { set +ex; } 2>/dev/null
       fi
     done
+  elif [ -f /pub/pkb/pb/playbooks/999202-bdev/files/vagrant-metadata.sh ]; then
+    set -ex
+    rsync -ai $EVAL_OPT /pub/pkb/pb/playbooks/999202-bdev/files/vagrant-metadata.sh /usr/local/etc/
+    { set +ex; } 2>/dev/null
   fi
+
   exit 0
 fi
 
