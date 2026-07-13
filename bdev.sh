@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260605"
+VERSION_BIN="260714"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -178,6 +178,8 @@ done
 # stage: HELP
 #
 if [ $HELP -eq 1 ]; then
+  echo "HPC netboot development tools."
+  echo ""
   echo "$SN -version                       # version"
   echo "$SN -install                       # install with rsync"
   echo "$SN -anpb [host_pattern] [-x]      # install with ansible"
