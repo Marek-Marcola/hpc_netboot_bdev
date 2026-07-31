@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260714"
+VERSION_BIN="260731"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -42,6 +42,8 @@ HELP=0
 QUIET=0
 
 declare -a ARGS1
+
+s=0
 
 ls | grep -q pkr.hcl
 [[ $? -eq 0 ]] && REPO="$(basename $(pwd))"
@@ -292,7 +294,7 @@ if [ $VERSION -eq 1 ]; then
   [[ "$VERSION_ENV" != "" ]] && echo "bdev.env $VERSION_ENV"
   if [ $(type -t packer) ]; then
     set -ex
-    packer --version
+    packer version
     packer plugins installed
     { set +ex; } 2>/dev/null
   fi
@@ -490,6 +492,7 @@ if [ $VALIDATE -ne 0 ]; then
   echo -e "\n$ID: stage: VALIDATE"
 
   set -ex
+  packer version
   packer validate .
   { set +ex; } 2>/dev/null
 fi
@@ -501,6 +504,7 @@ if [ $BUILD -ne 0 ]; then
   echo -e "\n$ID: stage: BUILD"
 
   set -ex
+  packer version
   packer build .
   { set +ex; } 2>/dev/null
 
