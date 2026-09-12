@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260731"
+VERSION_BIN="260912"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -363,7 +363,7 @@ if [ $INSTALL_ANPB -eq 1 ]; then
   echo "$ID: stage: INSTALL-ANPB (EVAL=$EVAL)"
 
   if [ ! $(type -t anpb) ]; then
-    echo "$ID: error: command not found: anpb"
+    echo "$ID: E: command not found: anpb"
     exit 1
   fi
 
@@ -388,6 +388,7 @@ fi
 # stage: INFO
 #
 if [ $QUIET -eq 0 ]; then
+  (( $s != 0 )) && echo; ((++s))
   echo "$ID: stage: INFO"
 
   [[ -n $INFO ]] && echo "info    = ${INFO}"
@@ -427,7 +428,8 @@ fi
 # stage: PLUGINS
 #
 if [ $PLUGINS -ne 0 ]; then
-  echo -e "\n$ID: stage: PLUGINS"
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: PLUGINS"
 
   set -ex
   packer plugins installed
@@ -438,7 +440,8 @@ fi
 # stage: ENV
 #
 if [ $ENV -ne 0 ]; then
-  echo -e "\n$ID: stage: ENV"
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: ENV"
 
   env | grep -e CHECKPOINT_DISABLE -e PACKER -e PKR | sort
 fi
@@ -447,7 +450,8 @@ fi
 # stage: LIST
 #
 if [ $LIST -ne 0 ]; then
-  echo -e "\n$ID: stage: LIST"
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: LIST"
 
   if [ -d $PKR_VAR_os_out/$PKR_VAR_os_dist-$PKR_VAR_os_ver-$PKR_VAR_os_id ]; then
     set -ex
@@ -460,7 +464,8 @@ fi
 # stage: CLEAN
 #
 if [ $CLEAN -ne 0 ]; then
-  echo -e "\n$ID: stage: CLEAN"
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: CLEAN"
 
   set -x
   rm -fv $PKR_VAR_os_out/$PKR_VAR_os_dist-$PKR_VAR_os_ver-$PKR_VAR_os_id/$PKR_VAR_os_dist-$PKR_VAR_os_ver-x86_64*
@@ -478,7 +483,8 @@ fi
 # stage: INSPECT
 #
 if [ $INSPECT -ne 0 ]; then
-  echo -e "\n$ID: stage: INSPECT"
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: INSPECT"
 
   set -ex
   packer inspect .
@@ -489,7 +495,8 @@ fi
 # stage: VALIDATE
 #
 if [ $VALIDATE -ne 0 ]; then
-  echo -e "\n$ID: stage: VALIDATE"
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: VALIDATE"
 
   set -ex
   packer version
@@ -501,7 +508,8 @@ fi
 # stage: BUILD
 #
 if [ $BUILD -ne 0 ]; then
-  echo -e "\n$ID: stage: BUILD"
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: BUILD"
 
   set -ex
   packer version
@@ -519,7 +527,8 @@ fi
 # stage: BUILDF
 #
 if [ $BUILDF -ne 0 ]; then
-  echo -e "\n$ID: stage: BUILDF"
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: BUILDF"
 
   R=$REPO
 
@@ -543,7 +552,8 @@ fi
 # stage: EXPORT_CREATE
 #
 if [ $EXPORT_CREATE -ne 0 ]; then
-  echo -e "\n$ID: stage: EXPORT CREATE"
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: EXPORT CREATE"
 
   set -ex
   export LIBGUESTFS_BACKEND=direct
@@ -558,7 +568,8 @@ fi
 # stage: EXPORT_UPLOAD
 #
 if [ $EXPORT_UPLOAD -ne 0 ]; then
-  echo -e "\n$ID: stage: EXPORT UPLOAD"
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: EXPORT UPLOAD"
 
   if [ -f "$PKR_VAR_os_etar" ]; then
     SCP_OPTS="-q -B -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR"
@@ -568,7 +579,7 @@ if [ $EXPORT_UPLOAD -ne 0 ]; then
       { set +ex; } 2>/dev/null
     done
   else
-    echo $ID: export file not found: $PKR_VAR_os_etar
+    echo $ID: E: export file not found: $PKR_VAR_os_etar
   fi
 fi
 
@@ -576,7 +587,8 @@ fi
 # stage: CHAIN
 #
 if [ $CHAIN -ne 0 ]; then
-  echo -e "\n$ID: stage: CHAIN"
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: CHAIN"
 
   if [ -f "$PKR_VAR_os_img" ]; then
     if [ "$CHAIN" = "1" ]; then
@@ -588,7 +600,7 @@ if [ $CHAIN -ne 0 ]; then
         sed -e 's/^i/  i/' -e 's|\./||' -e 's/^/  /' -e 's/^  $/version:/' -e 's|version-|/version.d/version-|';
     fi
   else
-    echo "$ID: error: access: $PKR_VAR_os_img"
+    echo "$ID: E: access: $PKR_VAR_os_img"
   fi
 fi
 
@@ -596,11 +608,12 @@ fi
 # stage: FILES
 #
 if [ $FILES -ne 0 ]; then
-  echo -e "\n$ID: stage: FILES"
+  (( $s != 0 )) && echo; ((++s))
+  echo "$ID: stage: FILES"
 
   if [ -f "$PKR_VAR_os_img" ]; then
     virt-tar-out -a $PKR_VAR_os_img / - | tar tvf - 2>&1
   else
-    echo "$ID: error: access: $PKR_VAR_os_img"
+    echo "$ID: E: access: $PKR_VAR_os_img"
   fi
 fi
