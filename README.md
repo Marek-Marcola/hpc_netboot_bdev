@@ -15,19 +15,13 @@ Install required software:
 
 Install:
 
-    ./bdev.sh --install
+    bdev.sh --inst -x
     -- or --
-    cp -fv bdev.env /usr/local/etc
+    bdev.sh --anpb -x
+    -- or --
     cp -fv bdev.sh /usr/local/bin
-
-Postinstall:
-
-    # cat > /etc/profile.d/zlocal-bdev.sh <<\EOF
-    b() {
-      local desc="@@netboot development (via bdev.sh)@@"
-      bdev.sh $@
-    }
-    EOF
+    cp -fv bdev.env /usr/local/etc
+    cp -fv zlocal-bdev.sh /etc/profile.d
 
 Configure ansible:
 
@@ -39,8 +33,8 @@ Configure ansible:
 
 Verify:
 
-    bdev.sh --version
+    b -ver
 
 Help:
 
-    bdev.sh --help
+    b -h
