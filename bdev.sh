@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260913"
+VERSION_BIN="260915"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -19,6 +19,7 @@ REPO=""
 : ${PKR_VAR_os_out:=""}
 : ${PKR_VAR_os_anpb:=""}
 : ${PKR_VAR_os_date:=""}
+: ${PKR_VAR_os_wait:=""}
 
 INSTALL_RSYNC=0
 INSTALL_RSYNC_HL="$(hostname -s)"
@@ -35,6 +36,7 @@ INSPECT=0
 VALIDATE=0
 BUILD=0
 BUILDF=0
+WAIT=10s
 EXPORT_CREATE=0
 EXPORT_UPLOAD=0
 CHAIN=0
@@ -101,6 +103,11 @@ while [ $# -gt 0 ]; do
       ;;
     -b)
       BUILD=1
+      shift
+      ;;
+    -w)
+      WAIT=666d
+      [[ -n "$2" && ${2:0:1} != "-" ]] && WAIT="$2" && shift
       shift
       ;;
     -bf)
@@ -210,15 +217,16 @@ if [ $HELP -eq 1 ]; then
   echo "$SN                           # info"
   echo ""
   echo "opts:"
-  echo "  -R repo"
-  echo "  -I id"
-  echo "  -F from"
-  echo "  -V ver"
-  echo "  -T tag"
-  echo "  -W web"
-  echo "  -O out"
-  echo "  -A anpb"
-  echo "  -d date"
+  echo "  -R repo    # repository"
+  echo "  -I id      # os id"
+  echo "  -F from    # from image"
+  echo "  -V ver     # os version"
+  echo "  -T tag     # tags"
+  echo "  -W web     # download url"
+  echo "  -O out     # output dir"
+  echo "  -A anpb    # base playbooks dir"
+  echo "  -d date    # build date"
+  echo "  -w [num]   # diag wait"
   echo ""
   echo "env files: \$HOME/.bdev.env .bdev.env \$PDEVENV /usr/local/etc/bdev.env"
   echo ""
@@ -246,6 +254,7 @@ done
 : ${PKR_VAR_os_iso:=$PKR_VAR_os_out/$PKR_VAR_os_dist-$PKR_VAR_os_ver-$PKR_VAR_os_from/$PKR_VAR_os_dist-$PKR_VAR_os_ver-x86_64.qcow2}
 : ${PKR_VAR_os_sum:=$(echo $PKR_VAR_os_iso|sed -e 's/iso$/txt/' -e 's/qcow2$/txt/')}
 : ${PKR_VAR_os_date:=$(date +%y%m%d%H%M)}
+: ${PKR_VAR_os_wait:=$WAIT}
 : ${PKR_VAR_os_edir:=$PKR_VAR_os_out/$PKR_VAR_os_dist-$PKR_VAR_os_ver-$PKR_VAR_os_id}
 : ${PKR_VAR_vg_repo:=$PKR_VAR_os_dist$PKR_VAR_os_maj-$PKR_VAR_os_from}
 
@@ -284,6 +293,7 @@ export PKR_VAR_os_iso
 export PKR_VAR_os_sum
 export PKR_VAR_os_anpb
 export PKR_VAR_os_date
+export PKR_VAR_os_wait
 export PKR_VAR_os_edir
 export PKR_VAR_os_etar
 export PKR_VAR_vg_repo
@@ -432,6 +442,7 @@ if [ $QUIET -eq 0 ]; then
   echo "os_sum  = ${PKR_VAR_os_sum:-[none]} ($os_sum_size)"
   echo "os_anpb = ${PKR_VAR_os_anpb:-[none]}"
   echo "os_date = ${PKR_VAR_os_date:-[none]}"
+  echo "os_wait = ${PKR_VAR_os_wait:-[none]}"
   echo "os_edir = ${PKR_VAR_os_edir:-[none]}"
   echo "os_etar = ${PKR_VAR_os_etar:-[none]}"
   echo "os_eurl = ${PKR_VAR_os_eurl:-[none]}"
