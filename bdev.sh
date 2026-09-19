@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260915"
+VERSION_BIN="260919"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -226,7 +226,7 @@ if [ $HELP -eq 1 ]; then
   echo "  -O out     # output dir"
   echo "  -A anpb    # base playbooks dir"
   echo "  -d date    # build date"
-  echo "  -w [num]   # diag wait"
+  echo "  -w [num]   # diag wait ($WAIT)"
   echo ""
   echo "env files: \$HOME/.bdev.env .bdev.env \$PDEVENV /usr/local/etc/bdev.env"
   echo ""
