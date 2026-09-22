@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260919"
+VERSION_BIN="260921"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -16,6 +16,8 @@ REPO=""
 : ${PKR_VAR_os_maj:=""}
 : ${PKR_VAR_os_tag:=""}
 : ${PKR_VAR_os_web:=""}
+: ${PKR_VAR_os_durl:=""}
+: ${PKR_VAR_os_dopt:=""}
 : ${PKR_VAR_os_out:=""}
 : ${PKR_VAR_os_anpb:=""}
 : ${PKR_VAR_os_date:=""}
@@ -287,6 +289,8 @@ export PKR_VAR_os_ver
 export PKR_VAR_os_maj
 export PKR_VAR_os_tag
 export PKR_VAR_os_web
+export PKR_VAR_os_durl
+export PKR_VAR_os_dopt
 export PKR_VAR_os_out
 export PKR_VAR_os_img
 export PKR_VAR_os_iso
@@ -436,6 +440,8 @@ if [ $QUIET -eq 0 ]; then
   echo "os_maj  = ${PKR_VAR_os_maj:-[none]}"
   echo "os_tag  = ${PKR_VAR_os_tag:-[none]}"
   echo "os_web  = ${PKR_VAR_os_web:-[none]}"
+  echo "os_durl = ${PKR_VAR_os_durl:-[none]}"
+  echo "os_dopt = ${PKR_VAR_os_dopt:-[none]}"
   echo "os_out  = ${PKR_VAR_os_out:-[none]}"
   echo "os_img  = ${PKR_VAR_os_img:-[none]} ($os_img_size)"
   echo "os_iso  = ${PKR_VAR_os_iso:-[none]} ($os_iso_size)"
