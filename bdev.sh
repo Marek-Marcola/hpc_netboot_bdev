@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260921"
+VERSION_BIN="260923"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -594,7 +594,7 @@ fi
 #
 if [ $EXPORT_CREATE -ne 0 ]; then
   (( $s != 0 )) && echo; ((++s))
-  echo "$ID: stage: EXPORT CREATE"
+  echo "$ID: stage: EXPORT-CREATE"
 
   set -ex
   export LIBGUESTFS_BACKEND=direct
@@ -610,7 +610,7 @@ fi
 #
 if [ $EXPORT_UPLOAD -ne 0 ]; then
   (( $s != 0 )) && echo; ((++s))
-  echo "$ID: stage: EXPORT UPLOAD"
+  echo "$ID: stage: EXPORT-UPLOAD"
 
   if [ -f "$PKR_VAR_os_etar" ]; then
     SCP_OPTS="-q -B -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR"
