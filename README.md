@@ -1,7 +1,7 @@
 netboot bdev
 ============
 
-HPC netboot development tools.
+High-performance computing (HPC) netboot development tools.
 
 Install
 -------
