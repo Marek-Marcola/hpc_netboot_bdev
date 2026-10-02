@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION_BIN="260923"
+VERSION_BIN="261002"
 
 SN="${0##*/}"
 ID="[$SN]"
@@ -15,7 +15,6 @@ REPO=""
 : ${PKR_VAR_os_ver:=""}
 : ${PKR_VAR_os_maj:=""}
 : ${PKR_VAR_os_tag:=""}
-: ${PKR_VAR_os_web:=""}
 : ${PKR_VAR_os_durl:=""}
 : ${PKR_VAR_os_dopt:=""}
 : ${PKR_VAR_os_out:=""}
@@ -157,10 +156,6 @@ while [ $# -gt 0 ]; do
       PKR_VAR_os_tag="$2"
       shift; shift
       ;;
-    -W)
-      PKR_VAR_os_web="$2"
-      shift; shift
-      ;;
     -O)
       PKR_VAR_os_out="$2"
       shift; shift
@@ -224,7 +219,6 @@ if [ $HELP -eq 1 ]; then
   echo "  -F from    # from image"
   echo "  -V ver     # os version"
   echo "  -T tag     # tags"
-  echo "  -W web     # download url"
   echo "  -O out     # output dir"
   echo "  -A anpb    # base playbooks dir"
   echo "  -d date    # build date"
@@ -288,7 +282,6 @@ export PKR_VAR_os_dist
 export PKR_VAR_os_ver
 export PKR_VAR_os_maj
 export PKR_VAR_os_tag
-export PKR_VAR_os_web
 export PKR_VAR_os_durl
 export PKR_VAR_os_dopt
 export PKR_VAR_os_out
@@ -439,7 +432,6 @@ if [ $QUIET -eq 0 ]; then
   echo "os_ver  = ${PKR_VAR_os_ver:-[none]}"
   echo "os_maj  = ${PKR_VAR_os_maj:-[none]}"
   echo "os_tag  = ${PKR_VAR_os_tag:-[none]}"
-  echo "os_web  = ${PKR_VAR_os_web:-[none]}"
   echo "os_durl = ${PKR_VAR_os_durl:-[none]}"
   echo "os_dopt = ${PKR_VAR_os_dopt:-[none]}"
   echo "os_out  = ${PKR_VAR_os_out:-[none]}"
